@@ -50,7 +50,17 @@ RUN     mkdir /src/grafana                                                      
         tar -xzf /src/grafana.tar.gz -C /opt/grafana --strip-components=1                                     &&\
         rm /src/grafana.tar.gz
 
+# Install Mongo
+RUN     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
+RUN	echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+RUN	apt-get -y update
+RUN     apt-get install -y mongodb-org 
+RUN 	mkdir -p /opt/mongo/data/db
 
+# Install Syren
+
+RUN 	wget https://github.com/scobal/seyren/releases/download/1.5.0/seyren-1.5.0.jar -O /src/seyren-1.5.0.jar
+	
 # ----------------- #
 #   Configuration   #
 # ----------------- #
@@ -85,6 +95,11 @@ ADD     ./grafana/dashboard-loader/dashboard-loader.js /src/dashboard-loader/
 ADD     ./nginx/nginx.conf /etc/nginx/nginx.conf
 ADD     ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Configure seyren
+ADD	./seyren/start-seyren.sh /src/start-seyren.sh
+RUN	mkdir /src/seyren
+ADD	./seyren/seyren-checks.json /src/seyren/
+ADD	./seyren/start-mongo-import-checks.sh /src/seyren/
 
 # ---------------- #
 #   Expose Ports   #
@@ -102,6 +117,11 @@ EXPOSE  8126
 # Graphite web port
 EXPOSE 81
 
+# mongo
+EXPOSE 27017
+
+# seyren
+EXPOSE 83
 
 
 # -------- #
