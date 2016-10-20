@@ -70,3 +70,8 @@ from one of our toy applications:
 
 ![Kamon Dashboard](http://kamon.io/assets/img/kamon-statsd-grafana.png)
 ![System Metrics Dashboard](http://kamon.io/assets/img/kamon-system-metrics.png)
+
+to build and run
+
+docker build -t statsd-with-seyren .
+docker run --detach -p 80:80 -p 81:81 -p 83:83 -p 8125:8125/udp -p 8126:8126 -p 27017:27017 --name=statsd-with-seyren statsd-with-seyren
